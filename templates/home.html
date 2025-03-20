@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArtGen</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
+
+        body {
+            margin: 0;
+            overflow-x: hidden;
+            font-family: 'Playfair Display', serif;
+            color: white;
+            text-align: center;
+            background-color: #4D575D;
+        }
+
+        .section {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        #home {
+            background: url('static/background.png') no-repeat center center/cover;
+            position: relative;
+            width: 100%;
+        }
+
+        .title {
+            font-size: 145px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px #003344, 0 0 20px #001122, 0 0 40px #000a16;
+<!--            text-shadow: 0 0 10px #0077ff, 0 0 20px #0055cc, 0 0 40px #003399;-->
+<!--            text-shadow: 0 0 10px cyan, 0 0 20px cyan, 0 0 40px cyan;-->
+<!--            text-shadow: 5px 5px 15px rgba(255, 255, 255, 0.3);-->
+        }
+
+        .slogan {
+            color: #E0E0E0;
+            font-size: 28px;
+            margin-top: 15px;
+            text-shadow: 0 0 5px #003344, 0 0 10px #001122;
+<!--            text-shadow: 0 0 5px cyan, 0 0 10px cyan;-->
+<!--            text-shadow: 3px 3px 10px rgba(255, 255, 255, 0.2);-->
+        }
+
+        .nav-right {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 20px;
+        }
+
+        .nav-right a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 10px 15px;
+            background: gray;
+            border-radius: 5px;
+            margin: 0 5px;
+            transition: 0.3s;
+        }
+        .nav-right a:hover {
+            color: white;
+            transform: scale(1.1);
+            background: #f39c12;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            font-size: 50px;
+            animation: bounce 1.5s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+
+        #about {
+            width: 100%;
+            padding: 50px 0;
+            background: linear-gradient(to bottom, #4D575D, #243c4d, #1a2633);
+            padding: 50px;
+            font-size: 19px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+            animation: fadeIn 0.8s ease-in-out forwards;
+        }
+
+        .generate-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #f39c12;
+            color: white;
+            font-size: 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease-in-out, box-shadow 0.3s;
+        }
+
+        .generate-btn:hover {
+            background-color: #e67e22;
+        }
+        .carousel-container {
+            position: relative;
+            max-width: 1500px; /* Tăng độ rộng */
+            margin: auto;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+        }
+
+        .carousel {
+            display: flex;
+            justify-content: space-between; /* Căn đều hai bên */
+            gap: 20px; /* Giãn khoảng cách giữa các ảnh */
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+        }
+
+
+        .carousel::-webkit-scrollbar {
+            display: none;
+        }
+
+        .carousel img {
+            width: 300px;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 10px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .carousel img:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .nav-buttons button {
+            padding: 10px 14px;
+            font-size: 16px;
+            background-color: #30496c;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .nav-buttons button:hover {
+            background-color: #1e3a5f;
+            transform: scale(1.1);
+        }
+
+        .nav-buttons button:active {
+            transform: scale(0.9);
+        }
+
+        .guide-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: left;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div id="home" class="section">
+        <div class="nav-right">
+            <a href="/register">Đăng ký</a>
+            <a href="/login">Đăng nhập</a>
+        </div>
+        <div>
+            <div id="title" class="title"></div>
+            <div id="slogan" class="slogan"></div>
+        </div>
+        <div class="scroll-indicator">&#8595;</div>
+    </div>
+
+    <div id="about" class="section">
+        <div class="container">
+            <h3>"ArtGen giúp bạn biến ý tưởng thành hình ảnh tuyệt đẹp bằng công nghệ AI tiên tiến."</h3>
+            <h3>Dễ sử dụng, nhanh chóng và sáng tạo!</h3>
+            <a href="/generate" class="generate-btn">Sinh ảnh ngay</a>
+
+            <h2>Gợi ý hôm nay</h2>
+            <div class="carousel-container">
+                <div class="carousel" id="carousel">
+                    {% for image in suggested_images %}
+                        <img src="{{ image }}" alt="Suggested Image">
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="nav-buttons">
+                <button onclick="scrollLeft()">⬅ Trước</button>
+                <button onclick="scrollRight()">Tiếp ➡</button>
+            </div>
+
+            <h2>Hướng dẫn viết prompt đúng:</h2>
+            <div class="guide-box">
+                <ul>
+                    <li>❌ Sai: "Chó"</li>
+                    <li>✅ Đúng: "Một chú chó Shiba Inu dễ thương đang ngồi trên bãi cỏ, ánh nắng chiều vàng rực."</li>
+                    <li>❌ Sai: "Cảnh biển"</li>
+                    <li>✅ Đúng: "Hoàng hôn trên bãi biển với sóng vỗ nhẹ nhàng, cát trắng mịn, một cặp đôi đang đi dạo."</li>
+                    <li>📌 Gợi ý: Càng chi tiết càng tốt! Mô tả màu sắc, cảm xúc, bối cảnh để AI hiểu rõ hơn.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const titleText = "ArtGen";
+        const sloganWords = ["- Nơi", "ý tưởng", "hóa", "thành", "hình -"];
+        let index = 0;
+
+        function typeEffectTitle() {
+            if (index < titleText.length) {
+                document.getElementById("title").innerText += titleText[index];
+                index++;
+                setTimeout(typeEffectTitle, 100);
+            } else {
+                setTimeout(typeEffectSlogan, 500);
+            }
+        }
+
+        function typeEffectSlogan() {
+            let sloganIndex = 0;
+            function typeWord() {
+                if (sloganIndex < sloganWords.length) {
+                    document.getElementById("slogan").innerHTML += sloganWords[sloganIndex] + " ";
+                    sloganIndex++;
+                    setTimeout(typeWord, 500);
+                }
+            }
+            typeWord();
+        }
+
+        typeEffectTitle();
+        function scrollLeft() {
+            document.getElementById("carousel").scrollBy({ right: 300, behavior: "smooth" });
+        }
+
+        function scrollRight() {
+            document.getElementById("carousel").scrollBy({ left: 300, behavior: "smooth" });
+        }
+    </script>
+</body>
+</html>

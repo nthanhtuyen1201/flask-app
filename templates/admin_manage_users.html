@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý người dùng</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(to bottom, #4D575D, #243c4d, #1a2633);
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+        .navbar {
+            background-color: #30496c;
+            padding: 20px 25px;
+            display: flex;
+            align-items: center;
+            height: 60px; /* Hoặc giá trị nhỏ hơn */
+            justify-content: space-between;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease-in-out;
+            position: relative;
+        }
+
+        .logo {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .logo-img {
+            height: 60px; /* Điều chỉnh kích thước logo */
+            transition: transform 0.3s;
+        }
+
+        .logo-img:hover {
+            transform: scale(1.1);
+        }
+
+        .separator {
+            color: #4CAF50;
+            font-size: 22px;
+            font-weight: bold;
+            margin: 0 12px;
+        }
+
+        .navbar:hover {
+            background-color: #12264d;
+        }
+
+        .nav-left, .nav-right {
+            display: flex;
+            gap: 15px;
+        }
+
+        .navbar a {
+            color: white;
+            font-size: 21px;
+            text-decoration: none;
+            transition: color 0.3s ease-in-out, transform 0.2s;
+        }
+
+        .navbar a:hover {
+            color: #f39c12;
+            transform: scale(1.1);
+        }
+
+        .admin-link {
+            font-weight: normal;
+            color: #ff4444;
+            transition: color 0.3s, transform 0.2s;
+            font-size: 18px;
+        }
+
+        .admin-link:hover {
+            color: #ff7777;
+            transform: scale(1.1);
+        }
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            color: white;
+        }
+        th {
+            background-color: #12264d;
+        }
+        button {
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            border: none;
+            transition: background 0.3s;
+        }
+        .delete-btn {
+            background-color: red;
+            color: white;
+        }
+        .delete-btn:hover {
+            background-color: darkred;
+        }
+        .vip-btn {
+            background-color: green;
+            color: white;
+        }
+        .vip-btn:hover {
+            background-color: darkgreen;
+        }
+        .not-vip-btn {
+            background-color: gray;
+            color: white;
+        }
+        .not-vip-btn:hover {
+            background-color: darkgray;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="nav-left">
+            <a href="/generate">Trang sinh ảnh</a> |
+            <a href="/upgradeVIP">Nâng cấp VIP</a>
+            {% if current_user.is_authenticated and current_user.is_admin %}
+                | <a href="/admin_manage_users" class="admin-link">Admin</a>
+            {% endif %}
+        </div>
+
+        <div class="logo">
+            <a href="/home">
+                <img src="/static/logo.png" alt="Logo" class="logo-img">
+            </a>
+        </div>
+
+        <div class="nav-right">
+            <a href="/profile">Hồ sơ</a> |
+            <a href="/logout">Đăng xuất</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Quản lý người dùng</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <p style="color: {% if category == 'success' %}green{% else %}red{% endif %};">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% if users %}
+            <h2>Danh sách người dùng</h2>
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Tên người dùng</th>
+                    <th>Quyền Admin</th>
+                    <th>VIP</th>
+                    <th>Ngày đăng ký VIP</th>
+                    <th>Hành động</th>
+                </tr>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ "Có" if user.is_admin else "Không" }}</td>
+                    <td>
+                        <form action="{{ url_for('admin_toggle_vip', user_id=user.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="{{ 'vip-btn' if user.is_vip else 'not-vip-btn' }}">
+                                {{ "Bật VIP" if not user.is_vip else "Tắt VIP" }}
+                            </button>
+                        </form>
+                    </td>
+                    <td>{{ user.vip_since.strftime('%d/%m/%Y %H:%M') if user.vip_since else "Chưa đăng ký" }}</td>
+                    <td>
+                        <form action="{{ url_for('admin_delete_user', user_id=user.id) }}" method="POST">
+                            <button type="submit" class="delete-btn" onclick="return confirm('Bạn có chắc muốn xóa user này?')">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p>Không có người dùng nào trong hệ thống.</p>
+        {% endif %}
+
+        {% if images %}
+            <h2>Lịch sử ảnh</h2>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>ID Ảnh</th>
+                        <th>Người tạo</th>
+                        <th>Prompt</th>
+                        <th>Hình ảnh</th>
+                        <th>Kích thước</th>
+                        <th>Phong cách</th>
+                        <th>Thời gian tạo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for image in images %}
+                    <tr>
+                        <td>{{ image.id }}</td>
+                        <td>{{ image.user.username }}</td>
+                        <td>{{ image.prompt }}</td>
+                        <td>
+                            <img src="{{ image.image_url }}" alt="Ảnh đã tạo" width="100">
+                        </td>
+                        <td>{{ image.size }}</td>
+                        <td>{{ image.style }}</td>
+                        <td>{{ image.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Chưa có ảnh nào trong hệ thống.</p>
+        {% endif %}
+
+    </div>
+</body>
+</html>

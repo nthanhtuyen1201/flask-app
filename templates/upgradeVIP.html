@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nâng cấp VIP</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            color: white;
+            min-height: 100vh;
+            background: linear-gradient(to bottom, #4D575D, #243c4d, #1a2633);
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background-color: #30496c;
+            padding: 20px 25px;
+            display: flex;
+            height: 60px; /* Hoặc giá trị nhỏ hơn */
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease-in-out;
+            position: relative;
+        }
+
+        .logo {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .logo-img {
+            height: 60px; /* Điều chỉnh kích thước logo */
+            transition: transform 0.3s;
+        }
+
+        .logo-img:hover {
+            transform: scale(1.1);
+        }
+
+        .separator {
+            color: #4CAF50;
+            font-size: 22px;
+            font-weight: bold;
+            margin: 0 12px;
+        }
+
+        .navbar:hover {
+            background-color: #12264d;
+        }
+
+        .nav-left, .nav-right {
+            display: flex;
+            gap: 15px;
+        }
+
+        .navbar a {
+            color: white;
+            font-size: 21px;
+            text-decoration: none;
+            transition: color 0.3s ease-in-out, transform 0.2s;
+        }
+
+        .navbar a:hover {
+            color: #f39c12;
+            transform: scale(1.1);
+        }
+
+        .admin-link {
+            font-weight: normal;
+            color: #ff4444;
+            transition: color 0.3s, transform 0.2s;
+            font-size: 18px;
+        }
+
+        .admin-link:hover {
+            color: #ff7777;
+            transform: scale(1.1);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .vip-benefits {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .vip-benefits ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .vip-benefits ul li {
+            margin: 10px 0;
+            font-size: 18px;
+        }
+
+        .price-box {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 15px 0;
+            color: #f39c12;
+        }
+
+        .payment-info {
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .upgrade-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #f39c12;
+            color: white;
+            font-size: 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease-in-out;
+            cursor: pointer;
+        }
+
+        .upgrade-btn:hover {
+            background-color: #e67e22;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="nav-left">
+            <a href="/generate">Trang sinh ảnh</a> |
+            <a href="/upgradeVIP">Nâng cấp VIP</a>
+            {% if current_user.is_authenticated and current_user.is_admin %}
+                | <a href="/admin_manage_users" class="admin-link">Admin</a>
+            {% endif %}
+        </div>
+
+        <div class="logo">
+            <a href="/home">
+                <img src="/static/logo.png" alt="Logo" class="logo-img">
+            </a>
+        </div>
+
+        <div class="nav-right">
+            <a href="/profile">Hồ sơ</a> |
+            <a href="/logout">Đăng xuất</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Nâng cấp tài khoản VIP</h1>
+        <div class="vip-benefits">
+            <h2>Lợi ích VIP:</h2>
+            <ul>
+                <li>⚡ Không giới hạn số lượng ảnh mỗi ngày</li>
+<!--                <li>📏 Hỗ trợ kích thước lớn hơn (1024x1024, 1280x720)</li>-->
+<!--                <li>🎨 Đa dạng phong cách hình ảnh</li>-->
+<!--                <li>🚀 Tốc độ xử lý nhanh hơn</li>-->
+<!--                <li>🔒 Quyền truy cập vào các model nâng cao</li>-->
+            </ul>
+        </div>
+
+        <div class="price-box">Giá: 1.000 VNĐ / tháng</div>
+
+        <div class="payment-info">
+            <p><strong>Cách thanh toán:</strong></p>
+            <p>Chuyển khoản đến STK: 0355898648 - Ngân hàng MB bank</p>
+            <p>Nội dung: VIP + [Tên tài khoản]</p>
+        </div>
+        <form method="POST" action="{{ url_for('upgradeVIP') }}">
+            <button type="submit" class="upgrade-btn">Nâng cấp ngay</button>
+        </form>
+    </div>
+
+    <script>
+        async function upgradeVIP() {
+            const response = await fetch('/upgradeVIP', { method: 'POST' });
+            const result = await response.json();
+
+            if (result.success) {
+                alert("Nâng cấp VIP thành công!");
+                location.reload(); // Làm mới trang để cập nhật trạng thái
+            } else {
+                alert("Lỗi: " + result.message);
+            }
+        }
+
+        async function renewVIP() {
+            const response = await fetch('/upgradeVIP', { method: 'POST' });
+            const result = await response.json();
+
+            if (result.success) {
+                alert("Gia hạn VIP thành công!");
+                location.reload();
+            } else {
+                alert("Lỗi: " + result.message);
+            }
+        }
+    </script>
+
+
+
+</body>
+</html>

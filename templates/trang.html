@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sinh ảnh từ văn bản</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            color: white;
+            background-color: #1e3a5f;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background-color: #30496c;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease-in-out;
+            position: relative;
+        }
+
+        .logo {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .logo-img {
+            height: 40px; /* Điều chỉnh kích thước logo */
+            transition: transform 0.3s;
+        }
+
+        .logo-img:hover {
+            transform: scale(1.1);
+        }
+
+        .separator {
+            color: #4CAF50;
+            font-size: 22px;
+            font-weight: bold;
+            margin: 0 12px;
+        }
+
+        .navbar:hover {
+            background-color: #12264d;
+        }
+
+        .nav-left, .nav-right {
+            display: flex;
+            gap: 15px;
+        }
+
+        .navbar a {
+            color: white;
+            font-size: 18px;
+            text-decoration: none;
+            transition: color 0.3s ease-in-out, transform 0.2s;
+        }
+
+        .navbar a:hover {
+            color: #f39c12;
+            transform: scale(1.1);
+        }
+
+        .admin-link {
+            font-weight: normal;
+            color: #ff4444;
+            transition: color 0.3s, transform 0.2s;
+            font-size: 18px;
+        }
+
+        .admin-link:hover {
+            color: #ff7777;
+            transform: scale(1.1);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.8s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .generate-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #f39c12;
+            color: white;
+            font-size: 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease-in-out, box-shadow 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .generate-btn:hover {
+            background-color: #e67e22;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .carousel-container {
+            position: relative;
+            max-width: 600px;
+            margin: auto;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+        }
+
+        .carousel {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+        }
+
+        .carousel::-webkit-scrollbar {
+            display: none;
+        }
+
+        .carousel img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 10px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .carousel img:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .nav-buttons button {
+            padding: 10px 14px;
+            font-size: 16px;
+            background-color: #f39c12;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .nav-buttons button:hover {
+            background-color: #e67e22;
+            transform: scale(1.1);
+        }
+
+        .nav-buttons button:active {
+            transform: scale(0.9);
+        }
+
+        .guide-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: left;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.8s ease-in-out forwards 0.3s;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="nav-left">
+            <a href="/home">Trang chủ</a> |
+            <a href="/upgradeVIP">Nâng cấp VIP</a> |
+            <a href="/profile">Hồ sơ</a>
+            {% if current_user.is_authenticated and current_user.is_admin %}
+                | <a href="/admin_manage_users" class="admin-link">Admin</a>
+            {% endif %}
+        </div>
+
+        <div class="logo">
+            <a href="/home">
+                <img src="/static/logo.png" alt="Logo" class="logo-img">
+            </a>
+        </div>
+
+        <div class="nav-right">
+            <a href="/register">Đăng ký</a> |
+            <a href="/login">Đăng nhập</a> |
+            <a href="/logout">Đăng xuất</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Chào mừng đến với hệ thống</h1>
+        <a href="/generate" class="generate-btn">Sinh ảnh từ văn bản</a>
+
+        <h2>Gợi ý hôm nay</h2>
+        <div class="carousel-container">
+            <div class="carousel" id="carousel">
+                {% for image in suggested_images %}
+                    <img src="{{ image }}" alt="Suggested Image">
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <button onclick="scrollLeft()">⬅ Trước</button>
+            <button onclick="scrollRight()">Tiếp ➡</button>
+        </div>
+
+        <h2>Hướng dẫn viết prompt đúng:</h2>
+        <div class="guide-box">
+            <ul>
+                <li>❌ Sai: "Chó"</li>
+                <li>✅ Đúng: "Một chú chó Shiba Inu dễ thương đang ngồi trên bãi cỏ, ánh nắng chiều vàng rực."</li>
+                <li>❌ Sai: "Cảnh biển"</li>
+                <li>✅ Đúng: "Hoàng hôn trên bãi biển với sóng vỗ nhẹ nhàng, cát trắng mịn, một cặp đôi đang đi dạo."</li>
+                <li>📌 Gợi ý: Càng chi tiết càng tốt! Mô tả màu sắc, cảm xúc, bối cảnh để AI hiểu rõ hơn.</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <script>
+        function scrollLeft() {
+            document.getElementById("carousel").scrollBy({ left: -300, behavior: "smooth" });
+        }
+
+        function scrollRight() {
+            document.getElementById("carousel").scrollBy({ left: 300, behavior: "smooth" });
+        }
+    </script>
+
+</body>
+</html>

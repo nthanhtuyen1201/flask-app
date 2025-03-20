@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ sơ cá nhân</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            color: white;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            background: linear-gradient(to bottom, #4D575D, #243c4d, #1a2633);
+        }
+
+        .navbar {
+            background-color: #30496c;
+            padding: 20px 25px;
+            display: flex;
+            align-items: center;
+            height: 60px; /* Hoặc giá trị nhỏ hơn */
+            justify-content: space-between;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease-in-out;
+            position: relative;
+        }
+
+        .navbar:hover {
+            background-color: #12264d;
+        }
+
+        .nav-left, .nav-right {
+            display: flex;
+            gap: 15px;
+        }
+
+        .navbar a {
+            color: white;
+            font-size: 21px;
+            text-decoration: none;
+            transition: color 0.3s ease-in-out, transform 0.2s;
+        }
+
+        .navbar a:hover {
+            color: #f39c12;
+            transform: scale(1.1);
+        }
+
+        .admin-link {
+            font-weight: normal;
+            color: #ff4444;
+            transition: color 0.3s, transform 0.2s;
+            font-size: 18px;
+        }
+
+        .admin-link:hover {
+            color: #ff7777;
+            transform: scale(1.1);
+        }
+
+
+        .logo {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .logo-img {
+            height: 60px; /* Điều chỉnh kích thước logo */
+            transition: transform 0.3s;
+        }
+
+        .logo-img:hover {
+            transform: scale(1.1);
+        }
+
+        .separator {
+            color: #4CAF50;
+            font-size: 22px;
+            font-weight: bold;
+            margin: 0 12px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .profile-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #f39c12;
+            margin-bottom: 10px;
+        }
+
+        .generate-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #f39c12;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .generate-btn:hover {
+            background: #e67e22;
+            transform: scale(1.05);
+        }
+
+        .history-container {
+            margin-top: 30px;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .image-grid div {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .image-grid img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="nav-left">
+            <a href="/generate">Trang sinh ảnh</a> |
+            <a href="/upgradeVIP">Nâng cấp VIP</a>
+            {% if current_user.is_authenticated and current_user.is_admin %}
+                | <a href="/admin_manage_users" class="admin-link">Admin</a>
+            {% endif %}
+        </div>
+
+        <div class="logo">
+            <a href="/home">
+                <img src="/static/logo.png" alt="Logo" class="logo-img">
+            </a>
+        </div>
+
+        <div class="nav-right">
+<!--            <a href="/register">Đăng ký</a> |-->
+<!--            <a href="/login">Đăng nhập</a> |-->
+            <a href="/profile">Hồ sơ</a> |
+            <a href="/logout">Đăng xuất</a>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <h1>Hồ sơ cá nhân</h1>
+        <div class="profile-card">
+<!--            <img src="/static/avatar.png" alt="Avatar" class="avatar">-->
+            <p><strong>Tên người dùng:</strong> {{ user.username }}</p>
+            <p><strong>Loại tài khoản:</strong> {{ "VIP" if user.is_vip else "Thường" }}</p>
+            {% if user.vip_since %}
+                <p><strong>VIP từ:</strong> {{ user.vip_since.strftime('%d-%m-%Y %H:%M:%S') }}</p>
+            {% endif %}
+            <a href="{{ url_for('upgradeVIP') }}" class="generate-btn">Nâng cấp VIP</a>
+        </div>
+
+        <h2>Lịch sử ảnh đã tạo</h2>
+        <div class="history-container">
+            {% if history %}
+                <div class="image-grid">
+                    {% for img in history %}
+                        <div>
+                            <img src="{{ img.image_url }}" alt="Generated Image">
+                            <p><strong>Prompt:</strong> {{ img.prompt }}</p>
+                            <p><strong>Ngày tạo:</strong> {{ img.created_at.strftime('%d-%m-%Y %H:%M:%S') }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>Bạn chưa tạo ảnh nào.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
