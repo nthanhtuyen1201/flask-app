@@ -196,7 +196,7 @@ def upgradeVIP():
             flash("Yêu cầu nâng cấp VIP đã được ghi nhận. Vui lòng chờ quản trị viên xét duyệt!", "success")
         else:
             flash(f"Bạn đã gửi yêu cầu nâng cấp VIP vào ngày {current_user.vip_since.strftime('%d-%m-%Y %H:%M:%S')}!", "info")
-        return redirect(url_for('home'))
+        return redirect(url_for('generate'))
     return render_template("upgradeVIP.html", vip_since=current_user.vip_since)
 
 @app.route("/profile")
