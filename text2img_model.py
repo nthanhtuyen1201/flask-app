@@ -74,3 +74,4 @@ def text2img(prompt, pipeline, height, width, style):
     ).images
 
     return images[0]
+
