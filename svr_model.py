@@ -219,3 +219,4 @@ if __name__ == '__main__':
         db.create_all()
         print("Database & tables created!")  # In ra để kiểm tra
     app.run(debug=False, host='0.0.0.0', port=8888, use_reloader=False)
+
